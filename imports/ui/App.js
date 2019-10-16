@@ -46,19 +46,13 @@ class App extends Component {
         <header>
           <h1>Todo List</h1>
 
-          <AccountsUIWrapper />
-
-          {this.props.currentUser ? (
-            <form className="new-task" onSubmit={this.handleSubmit.bind(this)}>
-              <input
-                type="text"
-                ref="textInput"
-                placeholder="Type to add new tasks"
-              />
-            </form>
-          ) : (
-            ''
-          )}
+          <form className="new-task" onSubmit={this.handleSubmit.bind(this)}>
+            <input
+              type="text"
+              ref="textInput"
+              placeholder="Type to add new tasks"
+            />
+          </form>
         </header>
 
         <ul>{this.renderTasks()}</ul>
@@ -70,10 +64,7 @@ class App extends Component {
 export default withTracker(() => {
   return {
     tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),
-<<<<<<< HEAD
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
     currentUser: Meteor.user(),
-=======
->>>>>>> parent of 396586f... temporary ui state
   };
 })(App);
