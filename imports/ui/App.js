@@ -67,6 +67,18 @@ class App extends Component {
               ref="textInput"
               placeholder="Type to add new tasks"
             />
+<<<<<<< HEAD
+=======
+            Hide Completed Tasks
+          </label>
+
+          <form className="new-task" onSubmit={this.handleSubmit.bind(this)}>
+            <input
+              type="text"
+              ref="textInput"
+              placeholder="Type to add new tasks"
+            />
+>>>>>>> parent of d683a97... adding user accounts
           </form>
         </header>
 
