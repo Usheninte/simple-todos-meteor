@@ -37,10 +37,6 @@ if (Meteor.isServer) {
         });
       });
 
-      afterEach(() => {
-        Tasks.remove();
-      });
-
       it('Can insert task', () => {
         const addTask = Meteor.server.method_handlers['tasks.insert'];
         const invocation = { userId };
@@ -81,11 +77,18 @@ if (Meteor.isServer) {
         Tasks.update(taskId, { $set: { private: setToPrivate } });
 
         const deleteTask = Meteor.server.method_handlers['tasks.remove'];
+        let userId = Random.id;
         const invocation = { userId };
 
-        deleteTask.apply(invocation, [taskId]);
+        assert.throws(
+          function() {
+            deleteTask.apply(invocation, [taskId]);
+          },
+          Meteor.Error,
+          '[not-authorized]',
+        );
 
-        assert.equal(Tasks.find().count(), 0);
+        assert.equal(Tasks.find().count(), 1);
       });
 
       it('Can set own task checked', () => {
