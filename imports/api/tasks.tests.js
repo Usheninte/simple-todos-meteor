@@ -37,6 +37,10 @@ if (Meteor.isServer) {
         });
       });
 
+      afterEach(() => {
+        Tasks.remove();
+      });
+
       it('Can insert task', () => {
         const addTask = Meteor.server.method_handlers['tasks.insert'];
         const invocation = { userId };
