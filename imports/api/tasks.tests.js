@@ -106,9 +106,53 @@ if (Meteor.isServer) {
         assert.equal(Tasks.find().count(), 1);
       });
 
-      // it("Can not set someone else's task checked", () => {
+      it("Can not set someone else's task checked", () => {
+        let setChecked = false;
+        Tasks.update(taskId, { $set: { checked: setChecked } });
 
-      // })
+        const checkTasks = Meteor.server.method_handlers['tasks.setChecked'];
+        const invocation = {};
+
+        assert.throws(
+          function() {
+            checkTasks.apply(invocation, [taskId, setChecked]);
+          },
+          Meteor.Error,
+          '[not-authorized]',
+        );
+
+        assert.equal(Tasks.find().count(), 1);
+      });
+
+      it('Can set own task private', () => {
+        let setToPrivate = true;
+        Tasks.update(taskId, { $set: { private: setToPrivate } });
+
+        const privateTask = Meteor.server.method_handlers['tasks.setPrivate'];
+        const invocation = { userId };
+
+        privateTask.apply(invocation, [taskId, setToPrivate]);
+
+        assert.equal(Tasks.find().count(), 1);
+      });
+
+      it("Can not set someone else's task private", () => {
+        let setToPrivate = false;
+        Tasks.update(taskId, { $set: { private: setToPrivate } });
+
+        const privateTask = Meteor.server.method_handlers['tasks.setPrivate'];
+        const invocation = {};
+
+        assert.throws(
+          function() {
+            privateTask.apply(invocation, [taskId, setToPrivate]);
+          },
+          Meteor.Error,
+          '[not-authorized',
+        );
+
+        assert.equal(Tasks.find().count(), 1);
+      });
     });
   });
 }
