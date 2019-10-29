@@ -138,7 +138,7 @@ if (Meteor.isServer) {
             privateTask.apply(invocation, [taskId, setToPrivate]);
           },
           Meteor.Error,
-          '[not-authorized',
+          '[not-authorized]',
         );
 
         assert.equal(Tasks.find().count(), 1);
