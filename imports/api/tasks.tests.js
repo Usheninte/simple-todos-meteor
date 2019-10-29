@@ -93,9 +93,21 @@ if (Meteor.isServer) {
         assert.equal(Tasks.find().count(), 0);
       });
 
-      // it("Can set own task checked", () => {
-      //   // set task as checked
-      //   Tasks.update(taskId)
+      it('Can set own task checked', () => {
+        // set task as checked
+        let setChecked = true;
+        Tasks.update(taskId, { $set: { checked: setChecked } });
+
+        const checkTasks = Meteor.server.method_handlers['tasks.setChecked'];
+        const invocation = { userId };
+
+        checkTasks.apply(invocation, [taskId, setChecked]);
+
+        assert.equal(Tasks.find().count(), 1);
+      });
+
+      // it("Can not set someone else's task checked", () => {
+
       // })
     });
   });
