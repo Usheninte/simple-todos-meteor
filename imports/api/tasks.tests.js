@@ -147,6 +147,23 @@ if (Meteor.isServer) {
 
         assert.equal(Tasks.find().count(), 1);
       });
+
+      it('Can view own tasks and non-private tasks', () => {
+        const userId = Random.id();
+        Tasks.insert({
+          text: 'test tasks 2',
+          createdAt: new Date(),
+          owner: userId,
+          username: 'stuffbody',
+        });
+
+        const invocation = { userId };
+        const tasksPublication = Meteor.server.publish_handlers.tasks;
+
+        TasksPub = tasksPublication.apply(invocation);
+
+        assert.equal(TasksPub.count(), 2);
+      });
     });
   });
 }
