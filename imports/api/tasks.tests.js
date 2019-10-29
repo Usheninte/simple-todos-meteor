@@ -11,7 +11,6 @@ if (Meteor.isServer) {
   describe('Tasks', () => {
     describe('methods', () => {
       let userId = Random.id();
-      let taskId;
       const username = 'userzero';
 
       before(() => {
@@ -38,24 +37,18 @@ if (Meteor.isServer) {
         });
       });
 
-      it('can insert task', () => {
+      it('Can insert task', () => {
         const addTask = Meteor.server.method_handlers['tasks.insert'];
 
         const invocation = { userId };
         let text = 'test text';
 
-        assert.throws(
-          function() {
-            addTask.apply(invocation, [text]);
-          },
-          Meteor.Error,
-          '[not-authorized]',
-        );
+        addTask.apply(invocation, [text]);
 
         assert.equal(Tasks.find().count(), 2);
       });
 
-      it('can delete owned task', () => {
+      it('Can delete own task', () => {
         // Find the internal implementation of the task method so we can
         // test it in isolation
         const deleteTask = Meteor.server.method_handlers['tasks.remove'];
@@ -69,6 +62,41 @@ if (Meteor.isServer) {
         // Verify that the method does what we expected
         assert.equal(Tasks.find().count(), 0);
       });
+
+      it('Can not insert task if not logged in', () => {
+        const addTask = Meteor.server.method_handlers['tasks.insert'];
+
+        const invocation = {};
+        let text = 'test text';
+
+        assert.throws(
+          function() {
+            addTask.apply(invocation, [text]);
+          },
+          Meteor.Error,
+          '[not-authorized]',
+        );
+
+        assert.equal(Tasks.find().count(), 1);
+      });
+
+      it("Can not delete someone else's task", () => {
+        // Set task to private
+        let setToPrivate = true;
+        Tasks.update(taskId, { $set: { private: setToPrivate } });
+
+        const deleteTask = Meteor.server.method_handlers['tasks.remove'];
+        const invocation = { userId };
+
+        deleteTask.apply(invocation, [taskId]);
+
+        assert.equal(Tasks.find().count(), 0);
+      });
+
+      // it("Can set own task checked", () => {
+      //   // set task as checked
+      //   Tasks.update(taskId)
+      // })
     });
   });
 }
