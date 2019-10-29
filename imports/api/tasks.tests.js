@@ -77,7 +77,7 @@ if (Meteor.isServer) {
         Tasks.update(taskId, { $set: { private: setToPrivate } });
 
         const deleteTask = Meteor.server.method_handlers['tasks.remove'];
-        let userId = Random.id;
+        let userId = Random.id();
         const invocation = { userId };
 
         assert.throws(
@@ -108,7 +108,8 @@ if (Meteor.isServer) {
         Tasks.update(taskId, { $set: { checked: setChecked } });
 
         const checkTasks = Meteor.server.method_handlers['tasks.setChecked'];
-        const invocation = {};
+        let userId = Random.id();
+        const invocation = { userId };
 
         assert.throws(
           function() {
@@ -138,7 +139,8 @@ if (Meteor.isServer) {
         Tasks.update(taskId, { $set: { private: setToPrivate } });
 
         const privateTask = Meteor.server.method_handlers['tasks.setPrivate'];
-        const invocation = {};
+        let userId = Random.id();
+        const invocation = { userId };
 
         assert.throws(
           function() {
